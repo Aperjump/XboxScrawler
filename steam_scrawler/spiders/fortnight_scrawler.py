@@ -14,7 +14,7 @@ class FortnightCrawler(scrapy.Spider):
         self.browser.close()
 
     def start_requests(self):
-        urls = ["https://www.microsoft.com/en-us/p/fortnite-standard-founders-pack/bxwnx8st04js?activetab=pivot:reviewstab"]
+        urls = ["https://www.microsoft.com/en-us/p/fortnite-standard-founders-pack/bxwnx8st04js?activetab=pivot:reviewstabb"]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
@@ -36,8 +36,14 @@ class FortnightCrawler(scrapy.Spider):
 
     def parse(self, response):
         self.browser.get(response.url)
-        self.browser.find_element_by_xpath("//a[@id='reviewsPageNextAnchor']").click()
-        self.parse_page(response)
+        while (response.xpath("//a[@class='c-glyph reviewsPageNext']")):
+            try:
+                self.parse_page(response)
+                self.browser.find_element_by_xpath("//a[@id='reviewsPageNextAnchor']").click()
+            except Exception as E:
+                # self.browser.quit()
+                print("crawl finish")
+        print("store data to disk")
         json_str = json.dumps(self.tot_list)
         fileObject = open('testdata.json', 'w')
         fileObject.write(json_str)
