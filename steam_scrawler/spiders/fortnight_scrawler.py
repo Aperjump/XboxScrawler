@@ -13,7 +13,7 @@ class FortnightCrawler(scrapy.Spider):
         text = selector.xpath("//div[@class='c-content-toggle "
                           "cli_reviews_content_toggle']/p/text()").extract_first().strip()
         star = selector.xpath("//div[@class='c-rating f-user-rated f-individual']/@data-value").extract_first()
-        header = selector.xpath("//h5[@class='c-heading-6']/@aria-label").extract_first()
+        header =  selector.xpath("//h5[@class='c-heading-6']/@aria-label").extract_first()
         helpful = selector.xpath("//div[@class='reviewFocusContainer']/div/p[@class='c-meta-text']/text()").extract_first()
         tuple_row = {'review_id': id, 'star': star, 'header': header, 'helpful': helpful, 'comment': text}
         return tuple_row
