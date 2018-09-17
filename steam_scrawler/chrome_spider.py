@@ -12,18 +12,42 @@ def crawl(reviews_sec, counter):
     #chrome_options = Options()
     #chrome_options.add_argument("--headless")  # define headless
     reviews = reviews_sec.find_elements_by_xpath("//div[@class = 'review cli_review']")
-    ratings = reviews_sec.find_elements_by_xpath("//div[@class='review cli_review']/div/div[@class='c-rating f-user-rated f-individual']")
-    headers = reviews_sec.find_elements_by_xpath("//div[@class='reviewFocusContainer']/div/h5")
-    texts = reviews_sec.find_elements_by_xpath("//div[@class='c-content-toggle cli_reviews_content_toggle']/p")
-    helpfuls = reviews_sec.find_elements_by_xpath("//div[@class='reviewFocusContainer']//p[@class='c-meta-text']")
-
-    size = len(reviews)
-    for i in range(size):
-        id = reviews[i].get_attribute("data-review-id")
-        rate = ratings[i].get_attribute("data-value")
-        header = headers[i].get_attribute("aria-label")
-        text = texts[i].text
-        helpful = helpfuls[i].text
+    # ratings = reviews_sec.find_elements_by_xpath("//div[@class='review cli_review']/div/div[@class='c-rating f-user-rated f-individual']")
+    # headers = reviews_sec.find_elements_by_xpath("//div[@class='reviewFocusContainer']/div/h5")
+    # texts = reviews_sec.find_elements_by_xpath("//div[@class='c-content-toggle cli_reviews_content_toggle']/p")
+    # helpfuls = reviews_sec.find_elements_by_xpath("//div[@class='reviewFocusContainer']//p[@class='c-meta-text']")
+    #
+    # size = len(reviews)
+    # for i in range(size):
+    #     id = reviews[i].get_attribute("data-review-id")
+    #     rate = ratings[i].get_attribute("data-value")
+    #     header = headers[i].get_attribute("aria-label")
+    #     text = texts[i].text
+    #     helpful = helpfuls[i].text
+    #     tuple_row = {'review_id': id, 'star': rate, 'header': header, 'helpful': helpful, 'comment': text}
+    #     tot.append(tuple_row)
+    for review_iter in reviews:
+        id = review_iter.get_attribute("data-review-id")
+        rate_struct = review_iter.find_element_by_xpath("//div[@class='review cli_review']/div/div[@class='c-rating f-user-rated f-individual']")
+        if rate_struct:
+            rate = rate_struct.get_attribute("data-value")
+        else:
+            rate = "-1"
+        header_struct = review_iter.find_element_by_xpath("//div[@class='reviewFocusContainer']/div/h5")
+        if header_struct:
+            header = header_struct.get_attribute("aria-label")
+        else:
+            header = ""
+        text_struct = review_iter.find_element_by_xpath("//div[@class='c-content-toggle cli_reviews_content_toggle']/p")
+        if text_struct:
+            text = text_struct.text
+        else:
+            text = ""
+        helpful_struct = review_iter.find_element_by_xpath("//div[@class='reviewFocusContainer']//p[@class='c-meta-text']")
+        if helpful_struct:
+            helpful = helpful_struct.text
+        else:
+            helpful = ""
         tuple_row = {'review_id': id, 'star': rate, 'header': header, 'helpful': helpful, 'comment': text}
         tot.append(tuple_row)
     print("finish crawl ", counter)
@@ -37,7 +61,7 @@ for url in urls:
     counter = 1
     while (next_sec):
         next_sec[0].click()
-        time.sleep(random.uniform(0.5, 1))
+        time.sleep(random.uniform(1, 3))
         counter += 1
         try:
             crawl(browser, counter)
